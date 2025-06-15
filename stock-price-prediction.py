@@ -11,7 +11,7 @@ from ta import add_all_ta_features
 from datetime import date
 
 st.set_page_config(layout="wide")
-st.title("📈 Stock Price Prediction with XGBoost")
+st.title("Stock Price Prediction with XGBoost")
 
 # Sidebar input options
 st.sidebar.header("Select Stock and Time Range")
@@ -25,12 +25,24 @@ def fetch_data(ticker, start, end):
     return df.dropna()
 
 @st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False)
 def add_features(df):
+    # Ensure required columns exist and are numeric
+    required_cols = ["Open", "High", "Low", "Close", "Volume"]
+    for col in required_cols:
+        if col not in df.columns:
+            raise ValueError(f"Missing column: {col}")
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+
     df = add_all_ta_features(df, open="Open", high="High", low="Low", close="Close", volume="Volume")
+
+    # Add lag features
     for i in range(1, 11):
         df[f"Close_Lag_{i}"] = df["Close"].shift(i)
-    return df.dropna()
 
+    df.dropna(inplace=True)
+    return df
+    
 if st.sidebar.button("Train Model"):
     df = fetch_data(ticker, start_date, end_date)
     df = add_features(df)
