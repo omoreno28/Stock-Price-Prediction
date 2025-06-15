@@ -11,7 +11,7 @@ from ta import add_all_ta_features
 from datetime import date
 
 st.set_page_config(layout="wide")
-st.title("📈 Stock Price Prediction with XGBoost")
+st.title("Stock Price Prediction with XGBoost")
 
 # Sidebar input options
 st.sidebar.header("Select Stock and Time Range")
